@@ -11,7 +11,8 @@ class Register extends Component {
         password: '',
         passwordConfirmation: '',
         errors: [],
-        loading: false
+        loading: false,
+        usersRef: firebase.database().ref('users')
     };
     isFormValid() {
         let errors = [];
@@ -65,8 +66,8 @@ class Register extends Component {
                     .then(() => {
                         this.saveUser(createdUser).then(() => {
                             console.log('user saved');
+                            this.setState({ loading: false });
                         })
-                        // this.setState({ loading: false });
                     })
                     .catch(error => {
                         this.setState({ errors: this.state.errors.concat(error), loading: false })
@@ -80,7 +81,10 @@ class Register extends Component {
         };
     }
     saveUser(createdUser) {
-        // return
+        return this.state.usersRef.child(createdUser.user.uid).set({
+            name: createdUser.user.displayName,
+            avatar: createdUser.user.photoURL
+        })
     }
     // handleInputError(error, inputName) {
     //     error.message.toLowerCase().includes('email');
